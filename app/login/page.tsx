@@ -1,8 +1,10 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState("");
@@ -22,7 +24,8 @@ export default function LoginPage() {
       if (!res.ok) {
         throw new Error(data.error || "Erro ao entrar");
       }
-      console.log("Logged in:", data);
+      document.cookie = `token=${data.token}; path=/`;
+      router.push("/");
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
