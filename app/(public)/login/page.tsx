@@ -37,7 +37,7 @@ export default function LoginPage() {
         onBeforeInstall as EventListener
       );
   }, []);
-
+  console.log("api-key ", process.env.NEXT_PUBLIC_FIREBASE_API_KEY);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
