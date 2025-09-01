@@ -17,14 +17,18 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Sender IA",
   description: "Aplicação para enviar arquivos CSV via webhook",
-  themeColor: "#0ea5e9",
   manifest: "/manifest.webmanifest",
+  icons: {
+    icon: "/logo-sender.png",
+    apple: "/logo-sender.png",
+  },
 };
 
 export const viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  themeColor: "#0ea5e9",
 };
 
 export default function RootLayout({
