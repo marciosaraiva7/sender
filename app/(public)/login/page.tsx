@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import Logo from "././../../../public/netune.png";
-import { toast } from "sonner";
 
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>;
@@ -49,13 +48,11 @@ export default function LoginPage() {
       document.cookie = `token=${data.token}; path=/`;
       router.push("/");
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Erro inesperado";
-      setError(message);
-      toast.error("Não foi possível entrar", {
-        description: message.includes("credenciais")
-          ? "Credenciais inválidas. Verifique e tente novamente."
-          : message,
-      });
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Erro inesperado");
+      }
     } finally {
       setLoading(false);
     }
