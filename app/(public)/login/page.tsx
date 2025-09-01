@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import * as React from "react";
+import { toast } from "sonner";
 import Logo from "././../../../public/netune.png";
 
 type BeforeInstallPromptEvent = Event & {
@@ -26,9 +27,15 @@ export default function LoginPage() {
       deferredPromptRef.current = e;
       setShowInstall(true);
     };
-    window.addEventListener("beforeinstallprompt", onBeforeInstall as EventListener);
+    window.addEventListener(
+      "beforeinstallprompt",
+      onBeforeInstall as EventListener
+    );
     return () =>
-      window.removeEventListener("beforeinstallprompt", onBeforeInstall as EventListener);
+      window.removeEventListener(
+        "beforeinstallprompt",
+        onBeforeInstall as EventListener
+      );
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -53,6 +60,10 @@ export default function LoginPage() {
       } else {
         setError("Erro inesperado");
       }
+      toast.error("Erro ao fazer login", {
+        description: "Verifique suas credenciais e tente novamente",
+        richColors: true,
+      });
     } finally {
       setLoading(false);
     }
@@ -94,7 +105,7 @@ export default function LoginPage() {
             className="w-full p-2 border rounded-md"
             required
           />
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {/* {error && <p className="text-red-500 text-sm">{error}</p>} */}
           <button
             type="submit"
             disabled={loading}
@@ -132,7 +143,8 @@ export default function LoginPage() {
                 </button>
               </div>
               <p className="text-sm text-muted-foreground mt-1">
-                Adicione o Sender à tela inicial para uma experiência mais rápida.
+                Adicione o Sender à tela inicial para uma experiência mais
+                rápida.
               </p>
               <div className="mt-4 flex flex-col gap-2">
                 {deferredPromptRef.current ? (
@@ -151,7 +163,8 @@ export default function LoginPage() {
                   </button>
                 ) : (
                   <div className="text-sm text-muted-foreground">
-                    Para instalar no iPhone/iPad: toque em Compartilhar → “Adicionar à Tela de Início”.
+                    Para instalar no iPhone/iPad: toque em Compartilhar →
+                    “Adicionar à Tela de Início”.
                   </div>
                 )}
                 <button
