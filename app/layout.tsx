@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
+import PwaRegister from "@/components/pwa-register";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,6 +17,8 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Sender IA",
   description: "Aplicação para enviar arquivos CSV via webhook",
+  themeColor: "#0ea5e9",
+  manifest: "/manifest.webmanifest",
 };
 
 export const viewport = {
@@ -34,6 +37,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* PWA registration component */}
+        <PwaRegister />
         {children}
         <Toaster />
       </body>

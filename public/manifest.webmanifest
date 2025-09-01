@@ -1,0 +1,20 @@
+{
+  "name": "Sender IA",
+  "short_name": "Sender",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0ea5e9",
+  "icons": [
+    {
+      "src": "/logo-sender.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo-sender.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

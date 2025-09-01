@@ -5,12 +5,31 @@ import { useRouter } from "next/navigation";
 import * as React from "react";
 import Logo from "././../../../public/netune.png";
 
+type BeforeInstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
+};
+
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+  const [showInstall, setShowInstall] = React.useState(false);
+  const deferredPromptRef = React.useRef<BeforeInstallPromptEvent | null>(null);
+
+  // Detecta possibilidade de instalação PWA (Android/Chromium)
+  React.useEffect(() => {
+    const onBeforeInstall = (e: BeforeInstallPromptEvent) => {
+      e.preventDefault();
+      deferredPromptRef.current = e;
+      setShowInstall(true);
+    };
+    window.addEventListener("beforeinstallprompt", onBeforeInstall as EventListener);
+    return () =>
+      window.removeEventListener("beforeinstallprompt", onBeforeInstall as EventListener);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,6 +111,61 @@ export default function LoginPage() {
           </button>
         </form>
       </div>
+
+      {/* Drawer para instalar PWA */}
+      {showInstall && (
+        <div className="fixed inset-0 z-50">
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setShowInstall(false)}
+          />
+          <div className="absolute inset-x-0 bottom-0 rounded-t-xl border bg-background p-4 shadow-2xl">
+            <div className="mx-auto max-w-sm">
+              <div className="flex items-center justify-between gap-2">
+                <h2 className="font-semibold">Instalar aplicativo</h2>
+                <button
+                  type="button"
+                  onClick={() => setShowInstall(false)}
+                  className="text-sm text-muted-foreground hover:underline"
+                >
+                  Fechar
+                </button>
+              </div>
+              <p className="text-sm text-muted-foreground mt-1">
+                Adicione o Sender à tela inicial para uma experiência mais rápida.
+              </p>
+              <div className="mt-4 flex flex-col gap-2">
+                {deferredPromptRef.current ? (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const e = deferredPromptRef.current;
+                      if (!e || typeof e.prompt !== "function") return;
+                      e.prompt();
+                      const choice = await e.userChoice;
+                      if (choice?.outcome === "accepted") setShowInstall(false);
+                    }}
+                    className="w-full h-10 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+                  >
+                    Instalar agora
+                  </button>
+                ) : (
+                  <div className="text-sm text-muted-foreground">
+                    Para instalar no iPhone/iPad: toque em Compartilhar → “Adicionar à Tela de Início”.
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setShowInstall(false)}
+                  className="w-full h-10 rounded-md border"
+                >
+                  Agora não
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
