@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import * as React from "react";
 
 export default function GlobalError({
@@ -21,7 +22,8 @@ export default function GlobalError({
         <div className="max-w-md text-center space-y-3">
           <h2 className="text-xl font-semibold">Algo deu errado</h2>
           <p className="text-muted-foreground text-sm">
-            Houve um problema ao carregar a aplicação. Você pode tentar novamente.
+            Houve um problema ao carregar a aplicação. Você pode tentar
+            novamente.
           </p>
           <div className="flex items-center justify-center gap-2">
             <button
@@ -30,13 +32,15 @@ export default function GlobalError({
             >
               Tentar novamente
             </button>
-            <a href="/login" className="rounded-md bg-blue-600 px-3 py-2 text-sm text-white">
+            <Link
+              href="/login"
+              className="rounded-md bg-blue-600 px-3 py-2 text-sm text-white"
+            >
               Ir para login
-            </a>
+            </Link>
           </div>
         </div>
       </body>
     </html>
   );
 }
-

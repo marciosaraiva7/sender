@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 export default function Error({
   error,
   reset,
@@ -10,7 +12,9 @@ export default function Error({
   return (
     <div className="w-full h-dvh grid place-items-center p-6">
       <div className="max-w-md text-center space-y-3">
-        <h2 className="text-xl font-semibold">Não foi possível carregar a página</h2>
+        <h2 className="text-xl font-semibold">
+          Não foi possível carregar a página
+        </h2>
         <p className="text-muted-foreground text-sm">
           {error?.message || "Ocorreu um erro inesperado."}
         </p>
@@ -21,12 +25,14 @@ export default function Error({
           >
             Tentar novamente
           </button>
-          <a href="/" className="rounded-md bg-blue-600 px-3 py-2 text-sm text-white">
+          <Link
+            href="/"
+            className="rounded-md bg-blue-600 px-3 py-2 text-sm text-white"
+          >
             Voltar ao início
-          </a>
+          </Link>
         </div>
       </div>
     </div>
   );
 }
-
