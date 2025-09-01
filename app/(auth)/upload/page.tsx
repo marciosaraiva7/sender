@@ -17,7 +17,6 @@ import {
   FileUpload,
   FileUploadDropzone,
   FileUploadItem,
-  FileUploadItemDelete,
   FileUploadItemMetadata,
   FileUploadItemPreview,
   FileUploadList,
@@ -32,7 +31,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowUpDown, Send, Trash2, Upload, X } from "lucide-react";
+import { ArrowUpDown, Send, Trash2, Upload } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -102,10 +101,11 @@ export default function Home() {
 
   const uid = React.useCallback(() => {
     try {
-      // @ts-ignore
-      if (typeof crypto !== "undefined" && crypto.randomUUID) {
-        // @ts-ignore
-        return crypto.randomUUID();
+      if (
+        typeof window !== "undefined" &&
+        typeof window.crypto?.randomUUID === "function"
+      ) {
+        return window.crypto.randomUUID();
       }
     } catch {}
     return Math.random().toString(36).slice(2);
@@ -227,14 +227,7 @@ export default function Home() {
     else setRowSelected(new Set(rows.map((r) => r.id)));
   };
 
-  const setCell = (rowId: string, key: string, value: string) => {
-    setRows((prev) =>
-      prev.map((r) =>
-        r.id === rowId ? { ...r, cells: { ...r.cells, [key]: value } } : r
-      )
-    );
-    setDirty(true);
-  };
+  // Sem edição inline no momento; manter utilitários mínimos para remoção e persistência
 
   const deleteRows = (ids: Set<string>) => {
     if (ids.size === 0) return;
@@ -245,7 +238,7 @@ export default function Home() {
 
   const escapeCsv = (val: string) => {
     const needsQuotes = /[",\n\r]/.test(val);
-    let out = val.replace(/"/g, '""');
+    const out = val.replace(/"/g, '""');
     return needsQuotes ? `"${out}"` : out;
   };
 
@@ -395,7 +388,15 @@ export default function Home() {
                 </FileUploadList>
               </div>
               <FileUploadTrigger asChild>
-                <Button variant="outline">Trocar arquivo</Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    // Limpa o arquivo atual para permitir substituir sem rejeição de maxFiles
+                    setFiles([]);
+                  }}
+                >
+                  Trocar arquivo
+                </Button>
               </FileUploadTrigger>
             </div>
           )}
@@ -428,13 +429,13 @@ export default function Home() {
         {/* Tabela gerada a partir do CSV */}
         {headers.length > 0 && (
           <div className="space-y-3">
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <h2 className="font-semibold">Pré-visualização do CSV</h2>
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Filtrar..."
-                className="border bg-background px-3 py-2 rounded-md text-sm w-56"
+                className="border bg-background px-3 py-2 rounded-md text-sm w-full sm:w-56"
               />
             </div>
             {/* Dashboard de afiliados */}
@@ -443,7 +444,7 @@ export default function Home() {
                 <label className="text-sm flex flex-col gap-1">
                   <span className="text-muted-foreground">Afiliado</span>
                   <select
-                    className="border rounded-md bg-background px-3 py-2 text-sm min-w-56"
+                    className="border rounded-md bg-background px-3 py-2 text-sm w-full sm:min-w-56"
                     value={selectedAffiliate}
                     onChange={(e) => setSelectedAffiliate(e.target.value)}
                   >
@@ -466,7 +467,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button
@@ -500,14 +501,14 @@ export default function Home() {
               <Button
                 onClick={applyChangesToFile}
                 disabled={!rows.length}
-                className="ml-auto"
+                className="ml-auto w-full sm:w-auto"
               >
                 {dirty ? "Salvar alterações no arquivo" : "Regravar arquivo"}
               </Button>
             </div>
 
             <div className="rounded-lg border overflow-x-auto overflow-y-auto max-h-[70vh]">
-              <Table className="text-[13px] sm:text-sm table-fixed min-w-[900px]">
+              <Table className="text-[13px] sm:text-sm table-fixed min-w-[640px] sm:min-w-[900px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-8 sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

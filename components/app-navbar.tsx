@@ -17,9 +17,6 @@ export function AppNavbar() {
   const [user, setUser] = useState<User | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Esconde a navbar na página de login
-  if (pathname === "/login") return null;
-
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => setUser(u));
     return () => unsub();
@@ -38,7 +35,7 @@ export function AppNavbar() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-    } catch (e) {
+    } catch {
       // ignora erros de signOut
     }
     // Remove cookie de sessão usado no middleware
@@ -51,6 +48,9 @@ export function AppNavbar() {
   const fallback = (user?.displayName || user?.email || "U")
     .slice(0, 1)
     .toUpperCase();
+
+  // Esconde a navbar na página de login
+  if (pathname === "/login") return null;
 
   return (
     <header className="w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
