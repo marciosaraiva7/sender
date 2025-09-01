@@ -63,6 +63,7 @@ export default function LoginPage() {
       toast.error("Erro ao fazer login", {
         description: "Verifique suas credenciais e tente novamente",
         richColors: true,
+        position: "top-center",
       });
     } finally {
       setLoading(false);

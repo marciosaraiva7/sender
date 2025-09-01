@@ -132,7 +132,10 @@ export default function Home() {
         setSelectedAffiliate("__all__");
       } catch (e) {
         console.error(e);
-        toast.error("Falha ao ler o CSV");
+        toast.error("Falha ao ler o CSV", {
+          richColors: true,
+          position: "top-center",
+        });
       }
     },
     [uid]
@@ -172,7 +175,10 @@ export default function Home() {
 
   const handleSendFile = async () => {
     if (files.length === 0) {
-      toast.error("Nenhum arquivo selecionado");
+      toast.error("Nenhum arquivo selecionado", {
+        richColors: true,
+        position: "top-center",
+      });
       return;
     }
 
@@ -199,6 +205,8 @@ export default function Home() {
       if (response.ok) {
         toast.success("Arquivo enviado com sucesso!", {
           description: `"${file.name}" foi enviado para o webhook`,
+          richColors: true,
+          position: "top-center",
         });
         // Limpa os arquivos após envio bem-sucedido
         setFiles([]);
@@ -255,7 +263,10 @@ export default function Home() {
 
   const applyChangesToFile = async () => {
     if (!files.length) {
-      toast.error("Nenhum arquivo para atualizar");
+      toast.error("Nenhum arquivo para atualizar", {
+        richColors: true,
+        position: "top-center",
+      });
       return;
     }
     const csv = toCSV(headers, rows);
@@ -263,18 +274,23 @@ export default function Home() {
     const updated = new File([csv], prev.name, { type: "text/csv" });
     setFiles([updated]);
     setDirty(false);
-    toast.success("Arquivo atualizado com as alterações da tabela");
+    toast.success("Arquivo atualizado com as alterações da tabela", {
+      richColors: true,
+      position: "top-center",
+    });
   };
 
   // Colunas ocultas visualmente na tabela
-  const normalizeKey = React.useCallback((s: string) =>
-    s
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/\p{Diacritic}/gu, "")
-      .replace(/[_\s-]+/g, "")
-      .trim(),
-  []);
+  const normalizeKey = React.useCallback(
+    (s: string) =>
+      s
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/\p{Diacritic}/gu, "")
+        .replace(/[_\s-]+/g, "")
+        .trim(),
+    []
+  );
 
   const isHiddenColumn = React.useCallback(
     (h: string) => {
@@ -356,7 +372,9 @@ export default function Home() {
           maxSize={5 * 1024 * 1024}
           className="w-full"
           value={files}
-          onValueChange={(next) => setFiles(next.length ? [next[next.length - 1]] : [])}
+          onValueChange={(next) =>
+            setFiles(next.length ? [next[next.length - 1]] : [])
+          }
           onFileReject={onFileReject}
           multiple={false}
         >
@@ -366,8 +384,12 @@ export default function Home() {
                 <div className="flex items-center justify-center rounded-full border p-2.5">
                   <Upload className="size-6 text-muted-foreground" />
                 </div>
-                <p className="font-medium text-sm">Arraste e solte o arquivo aqui</p>
-                <p className="text-muted-foreground text-xs">Ou clique para procurar (apenas 1 arquivo, até 5MB)</p>
+                <p className="font-medium text-sm">
+                  Arraste e solte o arquivo aqui
+                </p>
+                <p className="text-muted-foreground text-xs">
+                  Ou clique para procurar (apenas 1 arquivo, até 5MB)
+                </p>
               </div>
               <FileUploadTrigger asChild>
                 <Button variant="outline" size="sm" className="mt-2 w-fit">
@@ -546,7 +568,8 @@ export default function Home() {
                     .filter((r) => {
                       const aff = (r.cells[affiliateFieldKey] || "").trim();
                       const affiliateMatch =
-                        selectedAffiliate === "__all__" || aff === selectedAffiliate;
+                        selectedAffiliate === "__all__" ||
+                        aff === selectedAffiliate;
                       const queryMatch = query
                         ? Object.values(r.cells).some((v) =>
                             String(v)
@@ -565,7 +588,10 @@ export default function Home() {
                         : String(bv).localeCompare(String(av));
                     })
                     .map((r, idx) => (
-                      <TableRow key={r.id} className={idx % 2 ? "bg-muted/20" : undefined}>
+                      <TableRow
+                        key={r.id}
+                        className={idx % 2 ? "bg-muted/20" : undefined}
+                      >
                         <TableCell className="w-8 p-3">
                           <Checkbox
                             checked={rowSelected.has(r.id)}
@@ -580,8 +606,13 @@ export default function Home() {
                           />
                         </TableCell>
                         {displayHeaders.map((h) => (
-                          <TableCell key={h} className="p-3 whitespace-normal break-words align-top">
-                            <div className="text-sm leading-5">{r.cells[h] ?? ""}</div>
+                          <TableCell
+                            key={h}
+                            className="p-3 whitespace-normal break-words align-top"
+                          >
+                            <div className="text-sm leading-5">
+                              {r.cells[h] ?? ""}
+                            </div>
                           </TableCell>
                         ))}
                         <TableCell className="w-16 p-3">
@@ -593,11 +624,15 @@ export default function Home() {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Remover esta linha?</AlertDialogTitle>
+                                <AlertDialogTitle>
+                                  Remover esta linha?
+                                </AlertDialogTitle>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
                                 <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => deleteRows(new Set([r.id]))}>
+                                <AlertDialogAction
+                                  onClick={() => deleteRows(new Set([r.id]))}
+                                >
                                   Remover
                                 </AlertDialogAction>
                               </AlertDialogFooter>
@@ -608,7 +643,8 @@ export default function Home() {
                     ))}
                 </TableBody>
                 <TableCaption>
-                  {rows.length} linha(s) • Cabeçalho fixo • Clique no cabeçalho para ordenar
+                  {rows.length} linha(s) • Cabeçalho fixo • Clique no cabeçalho
+                  para ordenar
                 </TableCaption>
               </Table>
             </div>
