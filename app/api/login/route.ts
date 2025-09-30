@@ -7,7 +7,19 @@ export async function POST(req: Request) {
     const { email, password } = await req.json();
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const token = await userCredential.user.getIdToken();
-    return NextResponse.json({ uid: userCredential.user.uid, token });
+
+    const response = NextResponse.json({ uid: userCredential.user.uid });
+
+    response.cookies.set({
+      name: "token",
+      value: token,
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+    });
+
+    return response;
   } catch (error) {
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 400 });

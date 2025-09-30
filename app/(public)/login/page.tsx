@@ -37,7 +37,6 @@ export default function LoginPage() {
         onBeforeInstall as EventListener
       );
   }, []);
-  console.log("api-key ", process.env.NEXT_PUBLIC_FIREBASE_API_KEY);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -52,7 +51,6 @@ export default function LoginPage() {
       if (!res.ok) {
         throw new Error(data.error || "Erro ao entrar");
       }
-      document.cookie = `token=${data.token}; path=/`;
       router.push("/");
     } catch (err) {
       if (err instanceof Error) {
@@ -106,7 +104,7 @@ export default function LoginPage() {
             className="w-full p-2 border rounded-md"
             required
           />
-          {/* {error && <p className="text-red-500 text-sm">{error}</p>} */}
+          {error && <p className="text-red-500 text-sm">{error}</p>}
           <button
             type="submit"
             disabled={loading}
